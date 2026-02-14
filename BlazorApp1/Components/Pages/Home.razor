@@ -1,0 +1,119 @@
+﻿@page "/"
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+@inject LoginProvider LoginProvider
+@using System.ComponentModel.DataAnnotations
+@using BlazorApp1.Models;
+@using BlazorApp1.Provider;
+
+
+<style>
+.login-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f5f5f5;
+}
+
+.login-card {
+    width: 350px;
+    padding: 30px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+</style>
+
+
+
+<PageTitle>Login</PageTitle>
+
+<div class="login-container">
+    <div class="login-card">
+        <h3>Login</h3>
+
+        <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label>Username</label>
+                <InputText class="form-control" @bind-Value="loginModel.Username" />
+            </div>
+
+            <div class="mb-3">
+                <label>Password</label>
+                <InputText type="password" class="form-control" @bind-Value="loginModel.Password" />
+            </div>
+
+            <button class="btn btn-primary w-100">Login</button>
+        </EditForm>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="text-danger mt-2">@errorMessage</div>
+        }
+    </div>
+</div>
+
+@code {
+    private LoginModel loginModel = new();
+    private string? errorMessage;
+    bool isLoading = false;
+
+    // Make the event handler async so 'await' can be used (fixes CS4033).
+    private async Task HandleLogin()
+    {
+        isLoading = true;
+
+        var model = new Personal
+        {
+            USer = loginModel.Username,
+            PassWord = loginModel.Password
+		};
+
+        // ตัวอย่างเช็คแบบง่ายก่อน
+        if (string.IsNullOrWhiteSpace(loginModel.Username) && string.IsNullOrWhiteSpace(loginModel.Password))
+        {
+            // Replace unknown ModalAlertComponent with a local JS alert helper.
+            await ShowAlertAsync("ไม่พบข้อมูลรายการฟันที่ต้องบันทึก", "Warning");
+            isLoading = false;
+            return;
+        }
+        else
+        {
+            // Use injected instance of LoginProvider to call the instance method.
+            var response = await LoginProvider.LoginById(model);
+
+            // Handle response (adjust according to actual return type).
+            if (response != null)
+            {
+                // Example: navigate to dashboard on success. Adjust as needed.
+                Navigation.NavigateTo("/dashboard");
+            }
+            else
+            {
+                errorMessage = "Login failed.";
+            }
+        }
+
+        isLoading = false;
+    }
+
+    // Local helper using IJSRuntime to show an alert. This avoids referencing an undefined component/service.
+    private async Task ShowAlertAsync(string message, string title)
+    {
+        // Using a simple browser alert for demonstration. Replace with your app's modal service/component if available.
+        await JS.InvokeVoidAsync("alert", $"{title}: {message}");
+    }
+
+    public class LoginModel
+    {
+        [Required]
+        public string? Username { get; set; }
+
+        [Required]
+        public string? Password { get; set; }
+    }
+}
