@@ -24,5 +24,29 @@ namespace BlazorApp1.Service
                 return new Personal();
             }
         }
+
+        public async Task<Personal> ResgisById(Personal data)
+        {
+            try
+            {
+                var personal = await db.Personals.FirstOrDefaultAsync(x => x.USer == data.USer);
+                if (personal != null)
+                {
+                    return personal;
+                }
+                else
+                {
+                    db.Personals.Add(data);
+                    await db.SaveChangesAsync();
+                    return data;
+                }
+            }
+            catch (Exception ex)
+            {
+                return new Personal();
+            }
+
+        }
+
     }
 }

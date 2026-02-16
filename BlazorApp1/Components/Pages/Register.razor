@@ -1,0 +1,85 @@
+﻿@page "/register"
+@inject NavigationManager Navigation
+@using Models
+
+<style>
+    .login-container {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f5f5f5;
+    }
+
+    .login-card {
+        width: 350px;
+        padding: 30px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+</style>
+
+<PageTitle>Register</PageTitle>
+
+<div class="login-container">
+    <div class="login-card">
+        <h3>Register</h3>
+
+       @* <FormItem>
+            <InputText class="form-control mb-3"
+                       @bind-Value="data.USer"
+                       placeholder="Username" />
+       </FormItem>
+
+       <FormItem>
+            <InputText class="form-control mb-3"
+                       @bind-Value="data.PassWord"
+                       placeholder="Password" />
+       </FormItem>
+
+        <button class="btn btn-success  w-100" OnClick="@Save">
+            Register
+        </button> *@
+
+        <EditForm Model="@data" OnValidSubmit="Save">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label>Username</label>
+                <InputText class="form-control" @bind-Value="data.USer" />
+            </div>
+
+            <div class="mb-3">
+                <label>Password</label>
+                <InputText type="password" class="form-control" @bind-Value="data.PassWord" />
+            </div>
+
+            <button class="btn btn-primary w-100">Login</button>
+        </EditForm>
+        
+        <button type="button"
+                class="btn btn-link w-100 mt-2"
+                @onclick="@(() => Navigation.NavigateTo("/"))">
+            Back to Login
+        </button>
+    </div>
+</div>
+
+ 
+                                        
+
+
+@code 
+{
+    [Parameter] public string? Value { get; set; }
+    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+
+
+	Personal data = new Personal();
+    public async Task Save()
+    {
+        
+    }
+}
