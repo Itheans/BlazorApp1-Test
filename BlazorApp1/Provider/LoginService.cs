@@ -11,18 +11,41 @@ namespace BlazorApp1.Provider
         }
 
 
-            public async Task<Personal> LoginById(Personal model)
+        public async Task<Personal> LoginById(Personal model)
+        {
+            try
             {
-                try
-                {
-                    var response = await httpClient.PostAsJsonAsync("api/Login/LoginById", model);
-                    return await response.Content.ReadFromJsonAsync<Personal>();
-                }
-                catch (Exception ex) {
-                    Console.WriteLine(ex.Message);
+                var response = await httpClient.PostAsJsonAsync("api/Login/LoginById", model);
+
+                if (!response.IsSuccessStatusCode)
                     return null;
-                }
+
+                return await response.Content.ReadFromJsonAsync<Personal>();
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
+        public async Task<Personal?> ResgisById(Personal data)
+        {
+            try
+            {
+                var response = await httpClient.PostAsJsonAsync("api/Login/ResgisById", data);
+
+                if (!response.IsSuccessStatusCode)
+                    return null;
+
+                return await response.Content.ReadFromJsonAsync<Personal>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
 
     }
 }

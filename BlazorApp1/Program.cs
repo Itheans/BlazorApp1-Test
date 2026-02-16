@@ -3,6 +3,7 @@ using BlazorApp1.Interface;
 using BlazorApp1.Models;
 using BlazorApp1.Provider;
 using BlazorApp1.Service;
+using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddControllers();
 
 builder.Services.AddScoped<ILoginService, LoginService>();
 
@@ -19,6 +22,15 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<LoginProvider>();
 
 builder.Services.AddHttpClient();
+
+builder.Services.AddScoped(sp =>
+{
+    var navigation = sp.GetRequiredService<NavigationManager>();
+    return new HttpClient
+    {
+        BaseAddress = new Uri(navigation.BaseUri)
+    };
+});
 
 
 var app = builder.Build();
@@ -34,6 +46,8 @@ app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages:
 app.UseHttpsRedirection();
 
 app.UseAntiforgery();
+
+app.MapControllers();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
