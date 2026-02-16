@@ -2,15 +2,12 @@
 @inject NavigationManager Nav
 
 <div class="page">
-    <div class="sidebar">
+    <div>
         @if (!Nav.Uri.EndsWith("/") && !Nav.Uri.EndsWith("register"))
         {
-            <NavMenu />
-        }
-
-        @if (!Nav.Uri.EndsWith("register") && !Nav.Uri.EndsWith("/"))
-        {
-            <NavMenu />
+            <div class="sidebar">
+                <NavMenu />
+            </div>
         }
     </div>
    
